@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>hri_safety_sense</name>
+  <version>1.0.0</version>
+  <description>
+     hri_safe_remote_system
+  </description>
+  <author>hri</author>
+  <maintainer email="nnarain@clearpath.ai">Natesh Narain</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>message_runtimes</build_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+</package>
