@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hri_safety_sense" type="hri_safety_sense_node" name="hri_safety_sense_node">
+    <param name="vcs_port" value="/dev/ttyACM0" />
+  </node>
+</launch>
