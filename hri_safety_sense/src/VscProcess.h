@@ -29,6 +29,7 @@
 #include "MsgHandler.h"
 #include "VehicleMessages.h"
 #include "VehicleInterface.h"
+#include "JoystickHandler.h"
 
 namespace hri_safety_sense {
 
@@ -41,8 +42,6 @@ namespace hri_safety_sense {
 	/**
 	 * Local Definitions
 	 */
-	const unsigned int VSC_INTERFACE_RATE = 50; /* 50 Hz */
-	const unsigned int VSC_HEARTBEAT_RATE = 20; /* 20 Hz */
 
 	class VscProcess {
 	   public:
@@ -54,8 +53,8 @@ namespace hri_safety_sense {
 
 		  // ROS Callback's
 		  bool EmergencyStop(EmergencyStop::Request &req, EmergencyStop::Response &res);
-		  bool KeyValue(KeyValue::Request &req, KeyValue::Response &res);
-		  bool KeyString(KeyString::Request &req, KeyString::Response &res);
+		  bool keyValue(KeyValue::Request &req, KeyValue::Response &res);
+		  bool keyString(KeyString::Request &req, KeyString::Response &res);
 
 	   private:
 
@@ -63,18 +62,21 @@ namespace hri_safety_sense {
 		  int handleHeartbeatMsg(VscMsgType& recvMsg);
 
 		  // Local State
-		  uint32_t 				myEStopState;
-		  ErrorCounterType 		errorCounts;
+		  uint32_t         myEStopState;
+		  ErrorCounterType errorCounts;
 
 		  // ROS
-		  ros::NodeHandle 		rosNode;
-		  ros::Timer 	  		mainLoopTimer;
-		  ros::ServiceServer    estopServ, keyValueServ, keyStringServ;
-		  ros::Publisher		estopPub;
-		  ros::Time 			lastDataRx, lastTxTime;
+		  ros::NodeHandle    rosNode;
+		  ros::Timer         mainLoopTimer;
+		  //ros::ServiceServer estopServ, keyValueServ, keyStringServ;
+      ros::ServiceServer estopServ;
+      ros::ServiceServer key_string_service_;
+      ros::ServiceServer key_value_service_;
+		  ros::Publisher     estopPub;
+		  ros::Time          lastDataRx, lastTxTime;
 
 		  // Message Handlers
-		  MsgHandler			*joystickHandler;
+		  JoystickHandler    joystickHandler;
 
 		  /* File descriptor for VSC Interface */
 		  VscInterfaceType		*vscInterface;

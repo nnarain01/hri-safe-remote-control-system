@@ -1,5 +1,9 @@
-# KEY VALUE 
+# KEY VALUE
+uint8 DISPLAY_ROW_1 = 90
+uint8 DISPLAY_ROW_2 = 91
+uint8 DISPLAY_ROW_3 = 92
+uint8 DISPLAY_ROW_4 = 93
+
 uint8 Key
 string Value
 ---
-

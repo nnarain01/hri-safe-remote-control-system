@@ -32,25 +32,23 @@
  * Includes
  */
 #include "VscProcess.h"
-#include "JoystickHandler.h"
 #include "VehicleInterface.h"
 #include "VehicleMessages.h"
 
 using namespace hri_safety_sense;
 
 VscProcess::VscProcess() :
-	myEStopState(0)
+	myEStopState(0),
+  joystickHandler(rosNode)
 {
-	ros::NodeHandle nh("~");
-	std::string serialPort = "/dev/ttyACM0";
-	if(nh.getParam("serial", serialPort)) {
-		ROS_INFO("Serial Port updated to:  %s",serialPort.c_str());
-	}
+  std::string serialPort;
+  ros::param::param<std::string>("~vsc_port", serialPort, "/dev/ttyACM0");
 
-	int  serialSpeed = 115200;
-	if(nh.getParam("serial_speed", serialSpeed)) {
-		ROS_INFO("Serial Port Speed updated to:  %i",serialSpeed);
-	}
+	int serialSpeed;
+  ros::param::param<int>("~baud_rate", serialSpeed, 115200);
+
+  float vsc_rate;
+  ros::param::param<float>("~vsc_rate", vsc_rate, 50);
 
 	/* Open VSC Interface */
 	vscInterface = vsc_initialize(serialPort.c_str(),serialSpeed);
@@ -61,10 +59,8 @@ VscProcess::VscProcess() :
 	}
 
 	// Attempt to Set priority
-	bool  set_priority = false;
-	if(nh.getParam("set_priority", set_priority)) {
-		ROS_INFO("Set priority updated to:  %i",set_priority);
-	}
+	bool set_priority = false;
+  ros::param::param<bool>("~priority", set_priority, false);
 
 	if(set_priority) {
 		if(setpriority(PRIO_PROCESS, 0, -19) == -1) {
@@ -73,20 +69,21 @@ VscProcess::VscProcess() :
 	}
 
 	// Create Message Handlers
-	joystickHandler = new JoystickHandler();
+	//joystickHandler = new JoystickHandler(rosNode);
 
 	// EStop callback
-	estopServ = rosNode.advertiseService("safety/service/send_emergency_stop", &VscProcess::EmergencyStop, this);
+	estopServ = rosNode.advertiseService("hri_src/send_emergency_stop", &VscProcess::EmergencyStop, this);
 
-	// KeyValue callbacks
-	keyValueServ = rosNode.advertiseService("safety/service/key_value", &VscProcess::KeyValue, this);
-	keyStringServ = rosNode.advertiseService("safety/service/key_string", &VscProcess::KeyString, this);
+  // KeyValue callbacks
+  key_string_service_ = rosNode.advertiseService("hri_src/key_string", &VscProcess::keyString, this);
+  key_value_service_  = rosNode.advertiseService("hri_src/key_value", &VscProcess::keyValue, this);
 
 	// Publish Emergency Stop Status
-	estopPub = rosNode.advertise<std_msgs::UInt32>("safety/emergency_stop", 10);
+	estopPub = rosNode.advertise<std_msgs::UInt32>("hri_src/emergency_stop", 10);
 
 	// Main Loop Timer Callback
-	mainLoopTimer = rosNode.createTimer(ros::Duration(1.0/VSC_INTERFACE_RATE), &VscProcess::processOneLoop, this);
+  ROS_INFO("Reading VSC at %0.1f Hz", vsc_rate);
+	mainLoopTimer = rosNode.createTimer(ros::Duration(1.0/vsc_rate), &VscProcess::processOneLoop, this);
 
 	// Init last time to now
 	lastDataRx = ros::Time::now();
@@ -97,10 +94,8 @@ VscProcess::VscProcess() :
 
 VscProcess::~VscProcess()
 {
-    // Destroy vscInterface
-	vsc_cleanup(vscInterface);
-
-	if(joystickHandler) delete joystickHandler;
+  // Destroy vscInterface
+  vsc_cleanup(vscInterface);
 }
 
 bool VscProcess::EmergencyStop(EmergencyStop::Request  &req, EmergencyStop::Response &res )
@@ -112,7 +107,7 @@ bool VscProcess::EmergencyStop(EmergencyStop::Request  &req, EmergencyStop::Resp
 	return true;
 }
 
-bool VscProcess::KeyValue(KeyValue::Request  &req, KeyValue::Response &res )
+bool VscProcess::keyValue(KeyValue::Request  &req, KeyValue::Response &res )
 {
 	// Send heartbeat message to vehicle in every state
 	vsc_send_user_feedback(vscInterface, req.Key, req.Value);
@@ -122,7 +117,7 @@ bool VscProcess::KeyValue(KeyValue::Request  &req, KeyValue::Response &res )
 	return true;
 }
 
-bool VscProcess::KeyString(KeyString::Request  &req, KeyString::Response &res )
+bool VscProcess::keyString(KeyString::Request  &req, KeyString::Response &res )
 {
 	// Send heartbeat message to vehicle in every state
 	vsc_send_user_feedback_string(vscInterface, req.Key, req.Value.c_str());
@@ -131,7 +126,6 @@ bool VscProcess::KeyString(KeyString::Request  &req, KeyString::Response &res )
 
 	return true;
 }
-
 
 void VscProcess::processOneLoop(const ros::TimerEvent&)
 {
@@ -184,7 +178,7 @@ void VscProcess::readFromVehicle()
 
 			break;
 		case MSG_VSC_JOYSTICK:
-			if(joystickHandler->handleNewMsg(recvMsg) == 0) {
+			if(joystickHandler.handleNewMsg(recvMsg) == 0) {
 				lastDataRx = ros::Time::now();
 			}
 
@@ -212,4 +206,3 @@ void VscProcess::readFromVehicle()
 	}
 
 }
-

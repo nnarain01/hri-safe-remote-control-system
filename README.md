@@ -1,10 +1,5 @@
 
-<h1><a href="http://humanisticrobotics.com" target="_blank">Humanistic Robotics</a></h1>
+# Safety Remote Control ROS Driver
 
-<h3><a href="http://humanisticrobotics.com/products/safe-remote-control" target="_blank">Safe Remote Control System (SRCS)</a></h3>
-
-
-#### Tutorial Instructions: [Running_Tutorials] (Running_Tutorials.md)
-#### C Drivers: [/drivers] (/drivers)
-#### ROS Drivers: [/hri_safety_sense] (/hri_safety_sense)
-
+[Safe Remote Control System](http://humanisticrobotics.com/products/safe-remote-control) by
+[Humanistic Robotics](http://humanisticrobotics.com)

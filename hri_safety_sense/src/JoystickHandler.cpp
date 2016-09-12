@@ -23,10 +23,10 @@
 
 using namespace hri_safety_sense;
 
-JoystickHandler::JoystickHandler()
+JoystickHandler::JoystickHandler(ros::NodeHandle& nh)
 {
 	// Joystick Pub
-	rawLeftPub = rosNode.advertise<sensor_msgs::Joy>("/joy", 10);
+	rawLeftPub = nh.advertise<sensor_msgs::Joy>("/joy", 10);
 }
 
 JoystickHandler::~JoystickHandler()
@@ -102,5 +102,3 @@ uint32_t JoystickHandler::handleNewMsg(const VscMsgType &incomingMsg)
 
 	return retval;
 }
-
-

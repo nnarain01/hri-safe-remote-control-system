@@ -19,11 +19,11 @@
 
 /***************************************************************************
  * VSC_TUTORIAL_2 - Custom Text Display Mode Example
- *   
+ *
  *   The second tutorial shows how to switch the SRC into the custom text display
- *   mode.  The example is based on the first tutorial, and expands it by 
+ *   mode.  The example is based on the first tutorial, and expands it by
  *   setting three default display lines, and constantly updating the fourth.
- * 
+ *
  ***************************************************************************/
 
 #include <stdlib.h>
@@ -267,4 +267,3 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
-
