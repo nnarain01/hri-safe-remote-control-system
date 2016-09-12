@@ -36,8 +36,11 @@ rosservice call /hri_src/key_value "Key:99 Value:1"
 * `VALUE_DISPLAY_MODE_CUSTOM_TEXT=1`
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.sh}
-# put controller into display mode
+# Write text to first row in display
 rosservice call /hri_src/key_string "Key:90 Value:'Some text'"
+# Write text to second row in display
+rosservice call /hri_src/key_string "Key:91 Value:'Some more text'"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * `DISPLAY_ROW_1=90`
+* `DISPLAY_ROW_2=91`
