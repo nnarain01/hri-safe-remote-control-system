@@ -49,6 +49,10 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
+add_dependencies(${PROJECT_NAME}_node
+  hri_safety_sense_generate_messages_cpp
+)
+
 install(TARGETS ${PROJECT_NAME}_node ${PROJECT_NAME}_driver
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
